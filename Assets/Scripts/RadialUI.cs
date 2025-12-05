@@ -85,7 +85,7 @@ public class RadialUI : MonoBehaviour
         float angle = Mathf.Atan2(direccion.x, direccion.y) * Mathf.Rad2Deg;
         if (angle < 0) angle += 360;
 
-        currentSelectedRadialPart = Mathf.FloorToInt(angle * construcciones.Count / 360f);
+        currentSelectedRadialPart = Mathf.FloorToInt(angle * radialSections.Count / 360f);
     }
 
     private void ActualizarAnimaciones()
@@ -114,37 +114,51 @@ public class RadialUI : MonoBehaviour
     }
 
     private void GenerarRadialUI()
+{
+    radialSections.Clear();
+    iconos.Clear();
+    cantidadTexts.Clear();
+
+    // 🔎 Solo las desbloqueadas
+    List<ConstruccionSO> disponibles = construcciones.FindAll(c => c.desbloqueado);
+
+    int cantidadSecciones = disponibles.Count;
+
+    for (int i = 0; i < cantidadSecciones; i++)
     {
-        radialSections.Clear();
-        iconos.Clear();
-        cantidadTexts.Clear();
+        GameObject section = Instantiate(radialSectionPrefab, canvasTransform);
+        float angulo = -i * 360f / cantidadSecciones;
+        section.transform.localEulerAngles = new Vector3(0, 0, angulo);
 
-        int cantidadSecciones = construcciones.Count;
+        Image sectorImg = section.GetComponent<Image>();
+        sectorImg.fillAmount = 1f / cantidadSecciones - (separacion / 360f);
 
-        for (int i = 0; i < cantidadSecciones; i++)
-        {
-            GameObject section = Instantiate(radialSectionPrefab, canvasTransform);
-            float angulo = -i * 360f / cantidadSecciones;
-            section.transform.localEulerAngles = new Vector3(0, 0, angulo);
+        Transform iconoTransform = section.transform.Find("Icono");
+        Image icono = iconoTransform.GetComponent<Image>();
+        TMP_Text cant = iconoTransform.Find("cant").GetComponent<TMP_Text>();
 
-            Image sectorImg = section.GetComponent<Image>();
-            sectorImg.fillAmount = 1f / cantidadSecciones - (separacion / 360f);
+        // 🧭 Rotación inversa para que el contenido mire siempre hacia arriba
+        iconoTransform.localEulerAngles = new Vector3(0, 0, -angulo);
 
-            Transform iconoTransform = section.transform.Find("Icono");
-            Image icono = iconoTransform.GetComponent<Image>();
-            TMP_Text cant = iconoTransform.Find("cant").GetComponent<TMP_Text>();
-
-            // 🧭 Rotación inversa para que el contenido mire siempre hacia arriba
-            iconoTransform.localEulerAngles = new Vector3(0, 0, -angulo);
-
-            iconos.Add(icono);
-            cantidadTexts.Add(cant);
-            radialSections.Add(section);
-        }
-
-        ActualizarCantidades();
-        ActualizarIconos();
+        iconos.Add(icono);
+        cantidadTexts.Add(cant);
+        radialSections.Add(section);
     }
+    ActualizarCantidades();
+    ActualizarIconos();
+}
+
+public void RefrescarRadial()
+{
+    // Primero limpiar hijos del canvas
+    foreach (Transform child in canvasTransform)
+        Destroy(child.gameObject);
+
+    // Volver a generar
+    GenerarRadialUI();
+}
+
+
 
     private void ActualizarCantidades()
     {
