@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4d9662adb8232b429c13136045b754c, type: 3}
+  m_Name: NuevaConstruccion 1
+  m_EditorClassIdentifier: 
+  nombre: Nose
+  icono: {fileID: 21300000, guid: 6512f0cb52446344793e36427bd4dfef, type: 3}
+  prefab: {fileID: 1566281987293739592, guid: 97b5966e73791e44b8ac60c31b6f9b68, type: 3}
+  previewPrefab: {fileID: 1566281987293739592, guid: 97b5966e73791e44b8ac60c31b6f9b68, type: 3}
+  cantidadMaxima: 2
+  cantidadActual: 0
+  desbloqueado: 1

@@ -1,0 +1,47 @@
+# Blender 4.3.2 MTL File: 'None'
+# www.blender.org
+
+newmtl Material.003
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+Pr 0.667000
+Pm 0.000000
+Ps 0.000000
+Pc 0.000000
+Pcr 0.030000
+aniso 0.000000
+anisor 0.000000
+map_Kd C:/Users/ianmc/OneDrive/Desktop/Sales/Campsite/Texture/SleepingBags/SleepingBag_DarkBlue.png
+
+newmtl Material.007
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+Pr 0.667000
+Pm 0.000000
+Ps 0.000000
+Pc 0.000000
+Pcr 0.030000
+aniso 0.000000
+anisor 0.000000
+map_Kd C:/Users/ianmc/OneDrive/Desktop/Sales/Campsite/Texture/SleepingBags/Sleepbag_Blue.png
+
+newmtl Material.021
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+Pr 0.934717
+Pm 0.000000
+Ps 0.000000
+Pc 0.000000
+Pcr 0.030000
+aniso 0.000000
+anisor 0.000000
+map_Kd C:/Users/ianmc/OneDrive/Desktop/Sales/Campsite/Texture/SleepingBags/SleepingBag_White.png

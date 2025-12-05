@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bcdbacfa96300b40bf858ff2bc3b458, type: 3}
+  m_Name: New Game Mode SO
+  m_EditorClassIdentifier: 
+  nombreModo: Obstacle
+  descripcionModo: Prevent customers from leaving satisfied by using items and obstacles.
+  colorUI: {r: 0, g: 0, b: 0, a: 0}
+  misionPrincipal: {fileID: 11400000, guid: b482573948a460a43a4861e274da34a3, type: 2}
+  misionesSecundarias: []
