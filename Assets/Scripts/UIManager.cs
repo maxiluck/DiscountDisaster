@@ -33,6 +33,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Color colorFeliz = Color.green;
     [SerializeField] private Color colorEnojado = Color.red;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource audioSource;
+
 
     [Header("Refs")]
     [SerializeField] private RoundManager roundManager;
@@ -197,12 +200,12 @@ public class UIManager : MonoBehaviour
     }
 
     // --- Botones ---
-    public void ResumeGame() => HideAll();
-    public void RestartGame() { HideAll(); SceneManager.LoadScene(SceneManager.GetActiveScene().name); }
-    public void GoToMainMenu(string menuSceneName) { HideAll(); AsyncOperation operacion = SceneManager.LoadSceneAsync(0); }
-    public void QuitGame() { Application.Quit(); Debug.Log("Salir del juego"); }
-    public void NextRoundButton() { HideAll(); if (roundManager != null) roundManager.NextRound(); }
-    public void RetryButton() { HideAll(); if (roundManager != null) roundManager.RetrySameRound(); else SceneManager.LoadScene(SceneManager.GetActiveScene().name); }
+    public void ResumeGame() { HideAll(); audioSource.Play(); }
+    public void RestartGame() { HideAll(); SceneManager.LoadScene(SceneManager.GetActiveScene().name); audioSource.Play(); }
+    public void GoToMainMenu(string menuSceneName) { HideAll(); AsyncOperation operacion = SceneManager.LoadSceneAsync(0); audioSource.Play(); }
+    public void QuitGame() { Application.Quit(); Debug.Log("Salir del juego"); audioSource.Play(); }
+    public void NextRoundButton() { HideAll(); if (roundManager != null) roundManager.NextRound(); audioSource.Play(); }
+    public void RetryButton() { HideAll(); if (roundManager != null) roundManager.RetrySameRound(); else SceneManager.LoadScene(SceneManager.GetActiveScene().name); audioSource.Play(); }
 
     // --- Estrellas ---
     public void UpdateStars(int count)

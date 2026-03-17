@@ -56,6 +56,17 @@ public class RoundManager : MonoBehaviour
         OpenDoors(rondaActual.tienda);
         roundActiva = true;
 
+        // 👉 Integrar destino dinámico
+        ShopInstance[] instancias = FindObjectsOfType<ShopInstance>();
+        foreach (var inst in instancias)
+        {
+            if (inst.datosTienda == rondaActual.tienda)
+            {
+                spawner.destinoProducto = inst.puntoDestino;
+                break;
+            }
+        }
+
         // Configurar spawner
         spawner.cantidadPorOleada = rondaActual.cantidadClientes;
         spawner.SpawnOleada();

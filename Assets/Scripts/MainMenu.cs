@@ -6,6 +6,9 @@ public class MainMenu : MonoBehaviour
     [Header("Escena de juego")]
     [SerializeField] private Object gameScene; // arrastrás la escena aquí
     [SerializeField] private GameObject instructionsPanel;
+    [Header("Audio")]
+    [SerializeField] private AudioSource audioSource;
+
 
     void Start()
     {
@@ -16,7 +19,7 @@ public class MainMenu : MonoBehaviour
 
     public void Jugar()
     {
-       
+       audioSource.Play();
         AsyncOperation operacion = SceneManager.LoadSceneAsync(1);
 
         // 👇 opcional: ocultar cursor al entrar al juego
@@ -26,6 +29,7 @@ public class MainMenu : MonoBehaviour
 
     public void Salir()
     {
+        audioSource.Play();
         Application.Quit();
         Debug.Log("Salir del juego"); // solo se ve en editor
     }
@@ -34,6 +38,7 @@ public class MainMenu : MonoBehaviour
     {
         if (instructionsPanel != null)
         {
+            audioSource.Play();
             bool isActive = instructionsPanel.activeSelf;
             instructionsPanel.SetActive(!isActive);
         }

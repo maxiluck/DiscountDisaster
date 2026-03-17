@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8846de41dea283543b573b788bfb164c, type: 3}
+  m_Name: Second Round
+  m_EditorClassIdentifier: 
+  tienda: {fileID: 11400000, guid: e8881604d845b2e41b15f3e23be8bae1, type: 2}
+  modo: {fileID: 11400000, guid: 5a3e954499b877e428c464c3cbf3faa0, type: 2}
+  preRoundTiempo: 30
+  roundDuracion: 120
+  cantidadClientes: 100

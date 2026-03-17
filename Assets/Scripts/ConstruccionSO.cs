@@ -15,13 +15,12 @@ public class ConstruccionSO : ScriptableObject
     public int cantidadMaxima = 5;        // Límite de colocaciones
     [HideInInspector] public int cantidadActual = 0; // Contador interno
     public bool desbloqueado = true;      // Si está disponible o bloqueado en el menú radial
+    public bool bloqueadoInicial = false;
 
     public void ResetearCantidad()
     {
-        // Esto restablece el valor a su estado inicial para la sesión
         cantidadActual = 0; 
-        // Si no quieres depender de 'cantidadInicial', simplemente usa:
-        // cantidadActual = 0; 
+        desbloqueado = !bloqueadoInicial;
     }
 }
 

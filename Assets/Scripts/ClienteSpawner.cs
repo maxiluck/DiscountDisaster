@@ -55,6 +55,7 @@ public class ClienteSpawner : MonoBehaviour
                 clienteIA.InitCliente(2f, 6f); // por ejemplo paciencia entre 2 y 6 segundos
 
                 clienteIA.SetDestino(destinoProducto);
+                clienteIA.destinoGuardado = destinoProducto.position;
                 clienteIA.producto = destinoProducto;
                 clienteIA.salidaSuper = salidaSuper;
 

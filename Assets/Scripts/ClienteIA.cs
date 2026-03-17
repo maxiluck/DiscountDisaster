@@ -117,14 +117,14 @@ public class ClienteIA : MonoBehaviour
     }
 
     // --- Paciencia y frustración SOLO si no finalizó ---
-    if (!finalizado)
+    if (!finalizado && agent != null && agent.enabled && agent.isOnNavMesh)
     {
-        bool quiereMoverse = agent != null && agent.enabled && agent.hasPath && agent.desiredVelocity.magnitude > 0.1f;
-        bool casiNoAvanza = agent.velocity.magnitude < 0.3f;
-        bool lejosDelDestino = agent.remainingDistance > agent.stoppingDistance + 0.5f;
-        bool pathParcial = agent.pathStatus == NavMeshPathStatus.PathPartial;
+        bool quiereMoverse = agent.hasPath && agent.desiredVelocity.sqrMagnitude > 0.01f;
+        bool casiNoAvanza = agent.velocity.sqrMagnitude < 0.05f; // 👈 umbral más bajo
+        bool lejosDelDestino = agent.remainingDistance > agent.stoppingDistance + 0.2f;
+        bool pathInvalido = agent.pathStatus == NavMeshPathStatus.PathInvalid;
 
-        bool estaBloqueado = (quiereMoverse && casiNoAvanza && lejosDelDestino) || pathParcial;
+        bool estaBloqueado = (quiereMoverse && casiNoAvanza && lejosDelDestino) || pathInvalido;
 
         if (estaBloqueado)
         {
@@ -139,17 +139,17 @@ public class ClienteIA : MonoBehaviour
             }
 
             if (tiempoEsperando >= maxPaciencia)
-            {
                 ClienteFrustrado();
-            }
         }
-        else if (agent.desiredVelocity.magnitude > 1f && agent.velocity.magnitude > 1f)
+        else
         {
-            //tiempoEsperando = 0f;
+            // resetear paciencia si se mueve bien
+            if (agent.velocity.sqrMagnitude > 0.1f)
+                tiempoEsperando = 0f;
         }
     }
 
-    // --- Fade de visibilidad (siempre activo) ---
+    // --- Fade de visibilidad ---
     if (jugador != null && barraGroup != null)
     {
         float dist = Vector3.Distance(transform.position, jugador.position);
@@ -157,18 +157,18 @@ public class ClienteIA : MonoBehaviour
         barraGroup.alpha = Mathf.Lerp(barraGroup.alpha, targetAlpha, Time.deltaTime * 5f);
     }
 
-    // --- Animación y llegada al destino (siempre activo) ---
+    // --- Animación y llegada al destino ---
     if (agent != null && agent.enabled && agent.isOnNavMesh)
     {
         Vector3 localVel = transform.InverseTransformDirection(agent.velocity);
         Vector2 axis = new Vector2(localVel.x, localVel.z);
-        float state = agent.velocity.magnitude > 0.1f ? 1f : 0f;
+        float state = agent.velocity.sqrMagnitude > 0.05f ? 1f : 0f; // 👈 umbral más bajo
         animationHandler.Animate(in axis, state, false, Time.deltaTime);
 
-        if (agent.velocity.magnitude > 0.1f) haComenzado = true;
+        if (agent.velocity.sqrMagnitude > 0.05f) haComenzado = true;
 
-        bool pathListo = !agent.pathPending && agent.hasPath;
-        bool llegoAlDestino = haComenzado && pathListo && agent.remainingDistance <= agent.stoppingDistance + 0.05f;
+        bool llegoAlDestino = haComenzado && !agent.pathPending && agent.hasPath &&
+                              agent.remainingDistance <= agent.stoppingDistance + 0.05f;
 
         if (llegoAlDestino)
         {
@@ -179,20 +179,21 @@ public class ClienteIA : MonoBehaviour
             {
                 ClienteSatisfecho();
             }
-            else if (salidaSuper != null && Vector3.Distance(agent.destination, salidaSuper.position) <= 0.05f)
+            else if (salidaSuper != null &&
+                     Vector3.Distance(agent.destination, salidaSuper.position) <= 0.05f &&
+                     Vector3.Distance(transform.position, salidaSuper.position) <= agent.stoppingDistance + 0.1f)
             {
-                if (Vector3.Distance(transform.position, salidaSuper.position) <= agent.stoppingDistance + 0.1f)
-                {
-                    gameObject.SetActive(false);
-                }
+                gameObject.SetActive(false);
             }
-            else
+            // 👇 evitar reasignar destino innecesariamente
+            else if (agent.remainingDistance > agent.stoppingDistance + 0.1f)
             {
                 agent.SetDestination(destinoGuardado);
             }
         }
     }
 }
+
 
 
 
@@ -253,7 +254,7 @@ public class ClienteIA : MonoBehaviour
         {
             if (rb == rootRb) continue;
             rb.isKinematic = isKinematic;
-            if (!enabled) rb.velocity = Vector3.zero;
+            //if (!enabled) rb.velocity = Vector3.zero;
         }
 
         animator.enabled = !enabled;
@@ -281,24 +282,56 @@ public class ClienteIA : MonoBehaviour
     }
 
     private IEnumerator DesactivarDespues(float tiempo)
+{
+    // esperar el tiempo de ragdoll activo
+    yield return new WaitForSeconds(tiempo);
+
+    // Paso 1: desactivar ragdoll y warp
+    SetRagdoll(false);
+    yield return null; // esperar un frame
+
+    // Paso 2: animación de levantarse
+    if (animator != null)
     {
-        yield return new WaitForSeconds(tiempo);
+        animator.SetTrigger("GetUp");
+    }
+    yield return null; // esperar otro frame
 
-        SetRagdoll(false);
+    // Paso 3: reactivar navegación
+    if (agent != null)
+    {
+        if (!agent.enabled) agent.enabled = true;
 
-        if (animator != null)
-        {
-            yield return null;
-            animator.SetTrigger("GetUp");
-        }
-
-        if (agent != null && destinoGuardado != null)
+        // asegurarse de que está en NavMesh
+        if (agent.isOnNavMesh)
         {
             agent.isStopped = false;
             agent.ResetPath();
-            agent.SetDestination(destinoGuardado);
+
+            yield return null; // 👈 esperar un frame antes de asignar destino
+
+            // volver al destino guardado si existe
+            if (destinoGuardado != Vector3.zero)
+            {
+                agent.SetDestination(destinoGuardado);
+            }
+            else if (producto != null)
+            {
+                agent.SetDestination(producto.position);
+            }
+            else if (salidaSuper != null)
+            {
+                agent.SetDestination(salidaSuper.position);
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Cliente fuera del NavMesh al intentar reactivar navegación");
         }
     }
+}
+
+
 
     // --- ANIMATION HANDLER ---
     private class AnimationHandler
